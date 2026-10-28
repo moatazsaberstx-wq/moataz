@@ -1,14 +1,15 @@
 #Users
-ids=['0000','0001','0002','0003']
-users=['moataz','malek','ziad','eyad']
-passcodes=['2702','6767','1289','4011']
-balances=[15000,8000,12000,10000]
+import json
+with open('bank.json','r') as f:
+    ids=json.load(f)
 print('-----Bank App-----')
 #system vars
+x=()
+y=()
 sign_up=()
 op=()
-NewUser=()
-id_current=(3)
+new_user=()
+id_current=()
 pass_enter=()
 balance_enter=()
 user_check=()
@@ -17,91 +18,122 @@ id_holder=()
 user_edit=()
 pass_change=()
 name_change=()
+user_balance=()
 #atm vars
 withdrawal=()
 deposit=()
+user_balance=()
 pass_try=()
 confirmation=()
 transaction=()
 transaction_holder=()
 recieverID=()
+id_show=()
+name=()
 #signin
 while True:
     sign_up=int(input('What is the operation : \nsign in : 1\nlogin : 2\nExit : 3\nEnter the no : '))
 #account managment    
     if sign_up == 1:
-        id_current+=1
-        id_format=(f'{id_current:04d}')
-        ids.append(id_format)
-        NewUser=input('enter your first name : ')
-        users.append(NewUser)
-        pass_enter=int(input('Make a passcode : '))
-        passcodes.append(pass_enter)
+        (ids["count"])+=1
+        id_format=(f'{(ids["count"]):04d}')
+        new_user=input('enter your first name : ')
+        pass_enter=(input('Make a passcode : '))
         balance_enter=int(input('deposit your cash : '))
-        balances.append(balance_enter)
-        print(f'your ID is {ids[-1]} memories it ')
-        print('=================')
+        ids[id_format]={
+            'id':id_format,
+            'name': new_user,
+            'passcode':pass_enter,
+            'balance':balance_enter
+        }
+        id_show=ids[id_format]['id']
+        print(f'your ID is {id_show} remember it .')
+        print('============================')
 #user selecting
     elif sign_up == 2:
-        user_check=(input('enter your ID code : '))
-        id_holder=(ids.index(user_check))
-        pass_try=(input('enter your password : '))
-        if pass_try == (passcodes[id_holder]):   
-            print(f'Hi {users[id_holder]}')
+        user_check=input('enter your user id : ')
+        pass_try=input('enter your passcode : ')
+        if pass_try==ids[user_check]['passcode']:
 #operation selecting
+            name=ids[user_check]['name']
+            print(f'Hi {name}')
             op=int(input('--operation--\ndeposit : 1\nwithdrawal : 2\nview balance : 3\nchange passcode : 4\nchange username : 5\nTransfer money : 6\ndelete account : 7\nExit : 8 \nchoose : '))
-            print('=================')
-    #deposit        
+#deposit        
             if op == 1:
-                deposit=int(input('Please insert the money : '))
-                user_edit=((int(balances[id_holder]))+deposit)
-                balances[id_holder]=user_edit
-                print('=================')    
-    #withdrawal            
+                deposit=int(input('please insert the money : '))
+                if deposit<=0:
+                    print('invalid money amount')
+                    print('============================')
+                else :
+                    user_balance=int(ids[user_check]['balance'])+deposit
+                    ids[user_check]['balance']=user_balance
+                    print(f'your balance now is {user_balance}')
+                    print('============================')
+#withdrawal            
             elif op == 2:
                 withdrawal=int(input('you want to withdraw how much : '))
-                if withdrawal<=balances[id_holder]:
-                    user_edit=((int(balances[id_holder]))-withdrawal)
-                    balances[id_holder]=user_edit
-                    print('=================')  
-                else : print('Not enough balance\n=================')
-    #view balance            
+                user_balance=int(ids[user_check]['balance'])
+                if withdrawal>user_balance:
+                    print('no enough balance')
+                    print('============================')
+                else:
+                    print('okay')
+                    user_balance-=withdrawal
+                    print(f'your balance now is {user_balance}')
+                    print('============================')
+#view balance            
             elif op ==3:
-                print(f'your balance is : {balances[id_holder]}')
-                print('=================')  
-    #change passcode
+                user_balance=ids[user_check]['balance']
+                print(f'your balance is : {user_balance}')
+                print('============================')  
+#change passcode
             elif op == 4:
                 pass_change=int(input('enter the new passcode : '))
-                passcodes[id_holder]=pass_change
-                print('=================')  
-    #change username            
+                ids[user_check]['passcodes']=pass_change
+                print(f'done your passcode now is {pass_change}')
+                print('============================')  
+#change username            
             elif op == 5:
-                name_change=input('the new username : ')
-                old_name=(users[id_holder])
-                users[id_holder]=name_change
-                print('=================')  
-    #Exit            
+                name_change=input('Enter the new username : ')
+                ids[user_check]['name']=name_change
+                print(f'done your username now is {name_change}')
+                print('============================')
+#transaction  
+            elif op==6:
+                recieverID=int(input('enter the ID you want to send money to : '))
+                recieverID=(f'{recieverID:04d}')
+                transaction=int(input('Enter the money transfer : '))
+                user_balance=int(ids[user_check]['balance'])
+#names
+                x=(ids[user_check]['name'])
+                y=(ids[recieverID]['name'])
+                if transaction <= user_balance:
+                    transaction_holder=(int(ids[recieverID]['balance'])+transaction)
+                    ids[recieverID]['balance']=transaction_holder
+                    user_balance=int(ids[user_check]['balance'])-transaction
+                    ids[user_check]['balance']=user_balance
+                    print(f'you have send {transaction} SAR to {y}')
+                    print('============================')
+                else:
+                    print('LOW BALANCE!')
+#delete user
+            elif op ==7:
+                confirmation=int(input('---CONFIRM---\nYes : 1\nNo : 2\nEnter : '))
+                if confirmation==1:
+                    del ids[user_check]
+                    print('done')
+                    print('============================')
+                else:
+                    print('Ok take care')  
+#Exit            
             elif op ==8:
                 print('thank you')
                 break
-            elif op ==7:
-                confirmation=int(input('---CONFIRM---\nYes : 1\nNo : 2'))
-                if confirmation==1:
-                    users.remove(users[id_holder])
-                    ids.remove(ids[id_holder])
-                    passcodes.remove(passcodes[id_holder])
-                    balances.remove(balances[id_holder])
-                    print('done')
-                else:print('Ok take care\n=================')  
-            elif op==6:
-                recieverID=int(input('enter the ID you want to send money to : '))
-                transaction=int(input('Enter the money transfer : '))
-                if transaction <= balances[id_holder]:
-                    transaction_holder=((int(balances[id_holder]))-transaction)
-                    balances[id_holder]=transaction_holder
-                    balances[recieverID]+=transaction
-                else:print('LOW BALANCE!')
-        else : print('wrong password or ID')
+        else : 
+            print('wrong password or ID')
+            print('============================')
     elif sign_up == 3:
         print('Thank you')
         break
+with open('bank.json','w') as f:
+    json.dump(ids,f,indent=2)
