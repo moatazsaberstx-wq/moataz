@@ -1,1 +1,1 @@
-this is a simple bank system using while loops and if conditions , I used the parellel lists , no password hashing or a strong error expectations or handling
+in this version I made the code save the new accounts and changes to json file so it doesnot disappear when you stop the code 
